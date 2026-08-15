@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valoración de Importancia — ODC y Actividades — PEM LSJ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --ocean-deep:   #0a2540;
+    --ocean-mid:    #0e3d6e;
+    --ocean-teal:   #0b7b8a;
+    --ocean-aqua:   #1aa8b8;
+    --ocean-light:  #b3e8ef;
+    --ocean-pale:   #e8f7fa;
+    --ocean-foam:   #f0fafc;
+    --sand:         #f7f4ee;
+    --sand2:        #ede8de;
+    --text:         #0a2540;
+    --text2:        #3a5a70;
+    --text3:        #7a9aaa;
+    --border:       rgba(10,37,64,0.12);
+    --border2:      rgba(10,37,64,0.07);
+    --surface:      #ffffff;
+
+    --c1:  #0b7b8a;  --bg1: #d0f0f5;  --tc1: #065a66;  /* alta */
+    --c2:  #0F6E56;  --bg2: #E1F5EE;  --tc2: #0a4d3d;  /* media-alta */
+    --c3:  #b07a10;  --bg3: #faeeda;  --tc3: #7a4f00;  /* media */
+    --c4:  #a03030;  --bg4: #fceaea;  --tc4: #7a2020;  /* baja */
+
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+    font-size: 13px;
+    background: var(--sand);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--ocean-deep) 0%, var(--ocean-mid) 60%, var(--ocean-teal) 100%);
+    padding: 0 24px;
+    display: flex; align-items: center; gap: 16px;
+    position: relative; overflow: hidden; min-height: 72px;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 80% 50%, rgba(26,168,184,0.18) 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Cpath d='M0 30 Q30 10 60 30 Q90 50 120 30' stroke='rgba(255,255,255,0.04)' stroke-width='1.5' fill='none'/%3E%3Cpath d='M0 45 Q30 25 60 45 Q90 65 120 45' stroke='rgba(255,255,255,0.03)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .logo {
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo svg { width: 22px; height: 22px; fill: none; stroke: var(--ocean-light); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  header h1 { font-family: 'Raleway', sans-serif; font-size: 16px; font-weight: 700; color: #ffffff; letter-spacing: 0.02em; }
+  header p  { font-size: 11px; color: rgba(179,232,239,0.85); margin-top: 2px; }
+  .badge {
+    margin-left: auto;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--ocean-light);
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px; font-weight: 700;
+    padding: 4px 12px; border-radius: 20px;
+    white-space: nowrap; letter-spacing: 0.06em; text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  main { max-width: 1120px; margin: 0 auto; padding: 20px 20px 40px; }
+
+  .info-bar {
+    background: linear-gradient(90deg, var(--ocean-pale), var(--ocean-foam));
+    border: 1px solid rgba(11,123,138,0.25);
+    border-left: 4px solid var(--ocean-teal);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 11px; color: var(--ocean-mid); line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .info-bar strong { font-weight: 700; color: var(--ocean-deep); }
+
+  /* ── TABS ─────────────────────────────────── */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tabbtn {
+    flex: 1;
+    font-family: 'Raleway', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 11px 14px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .tabbtn.on {
+    background: linear-gradient(135deg, var(--ocean-teal), var(--ocean-aqua));
+    color: white; border-color: transparent;
+    box-shadow: 0 2px 8px rgba(11,123,138,0.3);
+  }
+  .view { display: none; }
+  .view.on { display: block; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(10,37,64,0.06);
+    margin-bottom: 14px;
+  }
+  .panel-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-icon {
+    width: 28px; height: 28px;
+    background: var(--ocean-pale);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .panel-icon svg { width: 15px; height: 15px; fill: none; stroke: var(--ocean-teal); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .panel-title { font-family: 'Raleway', sans-serif; font-size: 12px; font-weight: 700; color: var(--ocean-deep); letter-spacing: 0.03em; text-transform: uppercase; }
+
+  .pt { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 7px; margin-top: 12px; }
+  .pt:first-of-type { margin-top: 0; }
+
+  select {
+    width: 100%; padding: 8px 10px;
+    border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--ocean-foam); color: var(--text);
+    font-family: 'Source Sans 3', sans-serif; font-size: 12px;
+    margin-bottom: 6px; cursor: pointer; transition: border-color .15s;
+  }
+  select:focus { outline: none; border-color: var(--ocean-aqua); box-shadow: 0 0 0 3px rgba(26,168,184,0.15); }
+
+  .ni {
+    font-size: 10.5px; color: var(--text2); font-style: italic;
+    margin-bottom: 12px; line-height: 1.55; min-height: 2.5em;
+    padding: 7px 10px; background: var(--ocean-pale);
+    border-radius: var(--radius-sm); border-left: 3px solid var(--ocean-aqua);
+  }
+
+  .cr { margin-bottom: 10px; }
+  .rw { display: flex; justify-content: space-between; margin-bottom: 3px; }
+  .lb { font-size: 11px; color: var(--text2); }
+  .vl { font-size: 11px; font-weight: 700; color: var(--ocean-deep); min-width: 20px; text-align: right; }
+  input[type=range] {
+    width: 100%; height: 5px;
+    -webkit-appearance: none; appearance: none;
+    background: linear-gradient(90deg, var(--ocean-light), var(--border));
+    border-radius: 3px; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--ocean-teal); cursor: pointer;
+    border: 2.5px solid white; box-shadow: 0 1px 4px rgba(10,37,64,0.25);
+  }
+  .el { display: flex; justify-content: space-between; font-size: 9px; color: var(--text3); margin-top: 3px; }
+  .sr {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 12px; padding-top: 10px; border-top: 1.5px solid var(--ocean-pale);
+  }
+  .sl { font-size: 11px; color: var(--text2); font-weight: 600; }
+  .sn { font-size: 26px; font-weight: 800; font-family: 'Raleway', sans-serif; }
+
+  .catrow { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .cattag {
+    display: inline-block; font-family: 'Raleway', sans-serif;
+    font-size: 11px; font-weight: 700; padding: 5px 14px;
+    border-radius: 20px; letter-spacing: 0.03em;
+  }
+
+  .ab {
+    width: 100%; margin-top: 12px;
+    padding: 10px; font-family: 'Raleway', sans-serif;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    background: linear-gradient(135deg, var(--ocean-teal), var(--ocean-aqua));
+    color: white; border: none; border-radius: var(--radius-sm);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    transition: opacity .15s, transform .1s;
+    box-shadow: 0 2px 6px rgba(11,123,138,0.35);
+  }
+  .ab:hover { opacity: 0.9; transform: translateY(-1px); }
+  .ab:active { transform: translateY(0); }
+
+  .ms {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    box-shadow: 0 2px 8px rgba(10,37,64,0.06); margin-bottom: 14px;
+  }
+  .mh {
+    background: linear-gradient(90deg, var(--ocean-deep), var(--ocean-mid));
+    padding: 10px 16px; font-family: 'Raleway', sans-serif;
+    font-size: 12px; font-weight: 700; color: white;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    letter-spacing: 0.03em; flex-wrap: wrap; gap: 6px;
+  }
+  .mh span.sub { font-weight: 400; color: rgba(179,232,239,0.75); font-size: 11px; font-family: 'Source Sans 3', sans-serif; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th {
+    background: var(--ocean-pale); padding: 8px 10px; text-align: left;
+    font-family: 'Raleway', sans-serif; font-weight: 700; font-size: 10px;
+    color: var(--ocean-mid); border-bottom: 1.5px solid rgba(11,123,138,0.2);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--border2); color: var(--text2); vertical-align: middle; }
+  td.mn { color: var(--ocean-deep); font-weight: 700; }
+  td.sc2 { font-weight: 800; font-size: 15px; text-align: center; font-family: 'Raleway', sans-serif; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--ocean-foam); }
+  .dl {
+    background: none; border: none; cursor: pointer;
+    color: var(--text3); padding: 2px 6px; font-size: 13px; border-radius: 4px;
+  }
+  .dl:hover { background: var(--ocean-pale); color: var(--ocean-teal); }
+  .empty-row td { text-align: center; color: var(--text3); padding: 24px; font-style: italic; }
+
+  .leg {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    margin-top: 4px; padding: 10px 16px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: 0 2px 8px rgba(10,37,64,0.05);
+  }
+  .li { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
+  .lq { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex-shrink: 0; }
+
+  .exp-btn {
+    font-family: 'Raleway', sans-serif; font-size: 11px; font-weight: 600; cursor: pointer;
+    border: 1.5px solid rgba(255,255,255,0.3); border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.12); color: rgba(179,232,239,0.9);
+    padding: 5px 12px; letter-spacing: 0.03em; transition: background .15s;
+  }
+  .exp-btn:hover { background: rgba(255,255,255,0.2); }
+
+  footer {
+    text-align: center; padding: 18px; font-size: 10px; color: var(--text3);
+    border-top: 1px solid var(--border); background: var(--surface); margin-top: 24px;
+  }
+  footer::before {
+    content: '〰 〰 〰'; display: block; color: var(--ocean-light);
+    font-size: 14px; margin-bottom: 6px; letter-spacing: 6px;
+  }
+
+  .section-label {
+    font-family: 'Raleway', sans-serif; font-size: 10px; font-weight: 800;
+    color: var(--ocean-teal); text-transform: uppercase; letter-spacing: 0.12em;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--ocean-light), transparent); }
+
+  @media(max-width:680px){ .mh{align-items:flex-start;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+  </div>
+  <div>
+    <h1>Valoración de Importancia — ODC y Actividades</h1>
+  </div>
+</header>
+
+<main>
+  <div class="info-bar">
+    Califica la importancia de cada ODC y de cada actividad de forma individual. Selecciona un elemento, ajusta cada criterio con los sliders y agrégalo a la tabla. Los resultados se guardan solos y puedes exportarlos a CSV.
+  </div>
+
+  <div class="tabs">
+    <button class="tabbtn on" id="tab-odc" onclick="showTab('odc')">Objetos de Conservación (ODC)</button>
+    <button class="tabbtn" id="tab-act" onclick="showTab('act')">Actividades / Usos</button>
+  </div>
+
+  <!-- ═══════════════ ODC VIEW ═══════════════ -->
+  <div class="view on" id="view-odc">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <span class="panel-title">Objeto de Conservación</span>
+      </div>
+
+      <div class="pt">Selecciona el ODC</div>
+      <select id="o-sel" onchange="loO_note()">
+        <option>Aves playeras</option>
+        <option>Ballenas</option>
+        <option>Bancos de piangua</option>
+        <option>Bosque de manglar</option>
+        <option>Bosques de tierra firme</option>
+        <option>Bosques guandal</option>
+        <option>Camarones</option>
+        <option>Estuarios</option>
+        <option>Fondos no carbonatados de grano fino y grueso</option>
+        <option>Peces de interés comercial</option>
+        <option>Playas</option>
+        <option>Quebradas</option>
+        <option>Tiburones</option>
+        <option>Tortugas marinas</option>
+      </select>
+      <div class="ni" id="o-note">Cargando descripción…</div>
+
+      <div class="section-label">Valoración de importancia ecológica</div>
+
+      <div class="cr">
+        <div class="rw"><span class="lb">Importancia para etapas críticas del ciclo de vida de especies explotadas</span><span class="vl" id="ov1">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="or1" oninput="oCalc()">
+        <div class="el"><span>Ninguna o muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Importancia en ciclos de vida de especies raras, amenazadas, endémicas o emblemáticas</span><span class="vl" id="ov2">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="or2" oninput="oCalc()">
+        <div class="el"><span>Ninguna o muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Productividad biológica</span><span class="vl" id="ov3">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="or3" oninput="oCalc()">
+        <div class="el"><span>Ninguna o muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Diversidad biológica</span><span class="vl" id="ov4">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="or4" oninput="oCalc()">
+        <div class="el"><span>Ninguna o muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Estado de conservación / grado de transformación</span><span class="vl" id="ov5">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="or5" oninput="oCalc()">
+        <div class="el"><span>Muy transformado (2)</span><span>Muy conservado (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Importancia de sus servicios ecosistémicos</span><span class="vl" id="ov6">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="or6" oninput="oCalc()">
+        <div class="el"><span>Ninguna o muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Abundancia de individuos de especies raras, amenazadas o endémicas</span><span class="vl" id="ov7">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="or7" oninput="oCalc()">
+        <div class="el"><span>Ninguna o muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Importancia escénica o cultural</span><span class="vl" id="ov8">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="or8" oninput="oCalc()">
+        <div class="el"><span>Ninguna o muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+
+      <div class="sr">
+        <span class="sl">Importancia promedio del ODC</span>
+        <span class="sn" id="o-avg" style="color:var(--ocean-teal)">6.0</span>
+      </div>
+      <div class="catrow">
+        <span class="cattag" id="o-cat" style="background:var(--bg3);color:var(--tc3)">Moderada</span>
+      </div>
+
+      <button class="ab" onclick="addODC()">+ Agregar ODC a la tabla</button>
+    </div>
+
+    <div class="ms">
+      <div class="mh">
+        <span>ODC evaluados</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="sub" id="o-ct">0 ODC</span>
+          <span id="o-save" style="font-size:10px;color:rgba(179,232,239,0.65);font-style:italic"></span>
+          <button class="exp-btn" onclick="exportCSV('odc')">Exportar CSV</button>
+          <button class="exp-btn" onclick="clearStorage('odc')" style="background:rgba(160,48,48,0.25);border-color:rgba(200,100,100,0.4);color:rgba(255,180,180,0.85)">Limpiar</button>
+        </div>
+      </div>
+      <table>
+        <tbody id="o-tb">
+          <tr class="empty-row"><td colspan="4">Aún sin ODC evaluados. Selecciona uno arriba y agrégalo.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="leg">
+      <strong style="font-size:11px;color:var(--text2)">Categorías:</strong>
+      <div class="li"><span class="lq" style="background:#0b7b8a"></span>Muy alta (8–10)</div>
+      <div class="li"><span class="lq" style="background:#0F6E56"></span>Alta (6–7.9)</div>
+      <div class="li"><span class="lq" style="background:#b07a10"></span>Moderada (4–5.9)</div>
+      <div class="li"><span class="lq" style="background:#a03030"></span>Baja / muy baja (2–3.9)</div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════ ACTIVIDAD VIEW ═══════════════ -->
+  <div class="view" id="view-act">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <span class="panel-title">Actividad / Uso</span>
+      </div>
+
+      <div class="pt">Selecciona la actividad</div>
+      <select id="a-sel" onchange="loA_note()">
+        <option>Agricultura</option>
+        <option>Aprovechamiento forestal (mangual y bosque)</option>
+        <option>Caza</option>
+        <option>Recolección de piangua</option>
+        <option>Pesca artesanal</option>
+        <option>Pesca industrial</option>
+        <option>Aprovechamiento forestal mangle</option>
+        <option>Transporte / navegación</option>
+        <option>Aprovechamiento de tortugas</option>
+        <option>Vertimientos</option>
+      </select>
+      <div class="ni" id="a-note">Cargando descripción…</div>
+
+      <div class="section-label">Valoración de importancia socioeconómica</div>
+
+      <div class="cr">
+        <div class="rw"><span class="lb">Cantidad de usuarios beneficiados</span><span class="vl" id="av1">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="ar1" oninput="aCalc()">
+        <div class="el"><span>Muy poca, escasa (2)</span><span>Muy alta (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Cantidad de personas que dependen de la actividad</span><span class="vl" id="av2">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="ar2" oninput="aCalc()">
+        <div class="el"><span>Muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Importancia económica (ingresos que genera en el área)</span><span class="vl" id="av3">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="ar3" oninput="aCalc()">
+        <div class="el"><span>Muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+      <div class="cr">
+        <div class="rw"><span class="lb">Importancia sociocultural (dependencia de grupos vulnerables, valor cultural)</span><span class="vl" id="av4">6</span></div>
+        <input type="range" min="2" max="10" step="2" value="6" id="ar4" oninput="aCalc()">
+        <div class="el"><span>Muy poca (2)</span><span>Muy alta (10)</span></div>
+      </div>
+
+      <div class="sr">
+        <span class="sl">Importancia promedio de la actividad</span>
+        <span class="sn" id="a-avg" style="color:var(--ocean-mid)">6.0</span>
+      </div>
+      <div class="catrow">
+        <span class="cattag" id="a-cat" style="background:var(--bg3);color:var(--tc3)">Moderada</span>
+      </div>
+
+      <button class="ab" onclick="addACT()">+ Agregar actividad a la tabla</button>
+    </div>
+
+    <div class="ms">
+      <div class="mh">
+        <span>Actividades evaluadas</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="sub" id="a-ct">0 actividades</span>
+          <span id="a-save" style="font-size:10px;color:rgba(179,232,239,0.65);font-style:italic"></span>
+          <button class="exp-btn" onclick="exportCSV('act')">Exportar CSV</button>
+          <button class="exp-btn" onclick="clearStorage('act')" style="background:rgba(160,48,48,0.25);border-color:rgba(200,100,100,0.4);color:rgba(255,180,180,0.85)">Limpiar</button>
+        </div>
+      </div>
+      <table>
+        <tbody id="a-tb">
+          <tr class="empty-row"><td colspan="4">Aún sin actividades evaluadas. Selecciona una arriba y agrégala.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="leg">
+      <strong style="font-size:11px;color:var(--text2)">Categorías:</strong>
+      <div class="li"><span class="lq" style="background:#0b7b8a"></span>Muy alta (8–10)</div>
+      <div class="li"><span class="lq" style="background:#0F6E56"></span>Alta (6–7.9)</div>
+      <div class="li"><span class="lq" style="background:#b07a10"></span>Moderada (4–5.9)</div>
+      <div class="li"><span class="lq" style="background:#a03030"></span>Baja / muy baja (2–3.9)</div>
+
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  MarViva / CODECHOCÓ
+</footer>
+
+<script>
+/* ============================================================
+   NOTAS DESCRIPTIVAS (reutilizadas de la Matriz 1, solo contexto)
+   ============================================================ */
+var ODC_NOTE = {
+  'Aves playeras': 'Sitio prioritario para aves migratorias en la ruta del Pacífico (Giraldo Dávila, 2022). Alta dependencia de playas, playones y estuarios. ~10 % de las especies son migratorias neárticas.',
+  'Ballenas': 'Ballena jorobada: especie K altamente migratoria. Ruta de reproducción y cría por el Pacífico colombiano. Sensible a perturbación acústica y colisiones con embarcaciones.',
+  'Bancos de piangua': 'Presión alta por extracción continua, principalmente por mujeres afrocolombianas. Anadara tuberculosa de crecimiento lento; evidencia de sobreexplotación en varios bancos del Litoral.',
+  'Bosque de manglar': 'Ecosistema de alta fragilidad; hábitat crítico de fauna costera y barrera ante erosión. Recuperación lenta tras perturbación.',
+  'Bosques de tierra firme': 'Extracción selectiva de maderables (chanul, cuángare). Relativamente conservados frente a otros del Pacífico colombiano; hábitat de fauna silvestre cazada y especies maderables.',
+  'Bosques guandal': 'Bosques inundables de guandal (Otoba-Raphia). Sometidos a extracción de maderas finas y carbón vegetal. Alta dependencia hidrológica de los ríos de marea.',
+  'Camarones': 'Recurso bajo presión industrial significativa (arrastre de fondo). Fluctuaciones naturales por ENSO. Caladeros en límites del área.',
+  'Estuarios': 'Baja resistencia a modificaciones de caudal y salinidad; alta variabilidad natural. Afectados por sedimentación de la minería aguas arriba del San Juan (ACADESAN, 2022).',
+  'Fondos no carbonatados de grano fino y grueso': 'Comunidades bentónicas asociadas son sensibles a perturbación física. Área de caladero de camarón con potencial de arrastre industrial.',
+  'Peces de interés comercial': 'Alta presión histórica de pesca artesanal e industrial. Varias especies capturadas por debajo de la talla mínima de madurez (Baos et al., 2017). Pargos y meros como ODC del DRMI EMBB.',
+  'Playas': 'Estrés físico alto por oleaje, mareas y erosión costera acelerada. Sitios de anidación de tortugas y concentración de aves.',
+  'Quebradas': 'Afectadas por sedimentación y mercurio de la minería en cuenca media y alta del río San Juan (ACADESAN, 2022). Reducen conectividad hídrica y calidad del agua costera.',
+  'Tiburones': 'Especie K: madurez tardía, baja fecundidad, lento crecimiento. Poblaciones históricamente reducidas por pesca. ODC prioritario del DRMI EMBB.',
+  'Tortugas marinas': 'Especie K con décadas de recuperación poblacional. Alta amenaza histórica por captura directa e incidental. Áreas de anidación en playas del Litoral del San Juan.'
+};
+
+var ACT_NOTE = {
+  'Agricultura': 'Efectos principalmente por escorrentía de agroquímicos y sedimentos hacia cuerpos de agua costeros. Cultivos de uso doméstico y pancoger.',
+  'Aprovechamiento forestal (mangual y bosque)': 'Extracción de maderas del guandal y bosque de tierra firme, principalmente en cuenca baja y zonas de manglar.',
+  'Caza': 'Incluye aves acuáticas, mamíferos terrestres y reptiles (Tabla 38, Documento Soporte).',
+  'Recolección de piangua': 'Actividad realizada principalmente por mujeres afrocolombianas en el manglar. Alta frecuencia e intensidad.',
+  'Pesca artesanal': 'Múltiples artes (enmalle, espinel, línea, atarraya). Alta frecuencia, practicada todo el año.',
+  'Pesca industrial': 'Arrastre de fondo. Opera mayormente en límites del área con efectos de borde significativos.',
+  'Aprovechamiento forestal mangle': 'Corte directo de manglar para madera, leña y carbón.',
+  'Transporte / navegación': 'Alta frecuencia diaria de cabotaje y transporte de personas.',
+  'Aprovechamiento de tortugas': 'Colecta estacional de huevos y ejemplares adultos en playas de anidación.',
+  'Vertimientos': 'Aguas residuales domésticas sin tratamiento, con efectos acumulativos sobre ecosistemas costeros.'
+};
+
+var rowsODC = [];
+var rowsACT = [];
+
+/* ============================================================
+   TABS
+   ============================================================ */
+function showTab(t){
+  document.getElementById('tab-odc').classList.toggle('on', t==='odc');
+  document.getElementById('tab-act').classList.toggle('on', t==='act');
+  document.getElementById('view-odc').classList.toggle('on', t==='odc');
+  document.getElementById('view-act').classList.toggle('on', t==='act');
+}
+
+/* ============================================================
+   CATEGORY HELPERS
+   ============================================================ */
+function catFor(avg){
+  if(avg >= 8)  return {l:'Muy alta', bg:'var(--bg1)', tc:'var(--tc1)', sc:'#0b7b8a'};
+  if(avg >= 6)  return {l:'Alta',      bg:'var(--bg2)', tc:'var(--tc2)', sc:'#0F6E56'};
+  if(avg >= 4)  return {l:'Moderada',  bg:'var(--bg3)', tc:'var(--tc3)', sc:'#b07a10'};
+  return               {l:'Baja / muy baja', bg:'var(--bg4)', tc:'var(--tc4)', sc:'#a03030'};
+}
+
+function avg8(a,b,c,d,e,f,g,h){ return Math.round(((a+b+c+d+e+f+g+h)/8)*10)/10; }
+function avg4(a,b,c,d){ return Math.round(((a+b+c+d)/4)*10)/10; }
+
+/* ============================================================
+   ODC PANEL
+   ============================================================ */
+function loO_note(){
+  document.getElementById('o-note').textContent = ODC_NOTE[document.getElementById('o-sel').value] || '';
+  oCalc();
+}
+function oCalc(){
+  var v = function(i){ return parseInt(document.getElementById('or'+i).value); };
+  for(var i=1;i<=8;i++){ document.getElementById('ov'+i).textContent = v(i); }
+  var avg = avg8(v(1),v(2),v(3),v(4),v(5),v(6),v(7),v(8));
+  document.getElementById('o-avg').textContent = avg.toFixed(1);
+  var c = catFor(avg);
+  var tag = document.getElementById('o-cat');
+  tag.textContent = c.l; tag.style.background = c.bg; tag.style.color = c.tc;
+}
+
+function addODC(){
+  var u = document.getElementById('o-sel').value;
+  var v = function(i){ return parseInt(document.getElementById('or'+i).value); };
+  var avg = avg8(v(1),v(2),v(3),v(4),v(5),v(6),v(7),v(8));
+  var c = catFor(avg);
+  rowsODC.push({id:'o'+Date.now(), u:u,
+    c1:v(1),c2:v(2),c3:v(3),c4:v(4),c5:v(5),c6:v(6),c7:v(7),c8:v(8),
+    avg:avg, cat:c.l});
+  renderODC(); saveStorage('odc');
+}
+function delODC(id){ rowsODC = rowsODC.filter(function(x){return x.id!==id;}); renderODC(); saveStorage('odc'); }
+
+function renderODC(){
+  document.getElementById('o-ct').textContent = rowsODC.length+' ODC';
+  if(rowsODC.length===0){
+    document.getElementById('o-tb').innerHTML = '<tr class="empty-row"><td colspan="4">Aún sin ODC evaluados. Selecciona uno arriba y agrégalo.</td></tr>';
+    return;
+  }
+  var h = '<tr><th>ODC</th><th style="text-align:center">Promedio</th><th>Categoría</th><th></th></tr>';
+  rowsODC.forEach(function(x){
+    var c = catFor(x.avg);
+    h += '<tr>';
+    h += '<td class="mn">'+x.u+'</td>';
+    h += '<td class="sc2" style="color:'+c.sc+'">'+x.avg.toFixed(1)+'</td>';
+    h += '<td><span style="display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;font-family:Raleway,sans-serif;background:'+c.bg.replace('var(--','').replace(')','')+';background:'+cssvar(c.bg)+';color:'+cssvar(c.tc)+'">'+x.cat+'</span></td>';
+    h += '<td><button class="dl" title="Eliminar fila" onclick="delODC(\''+x.id+'\')">✕</button></td>';
+    h += '</tr>';
+  });
+  document.getElementById('o-tb').innerHTML = h;
+}
+
+/* helper: resolve a css var() string to its actual value for inline style use */
+function cssvar(v){
+  var m = /var\((--[a-zA-Z0-9-]+)\)/.exec(v);
+  if(!m) return v;
+  return getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+}
+
+/* ============================================================
+   ACTIVIDAD PANEL
+   ============================================================ */
+function loA_note(){
+  document.getElementById('a-note').textContent = ACT_NOTE[document.getElementById('a-sel').value] || '';
+  aCalc();
+}
+function aCalc(){
+  var v = function(i){ return parseInt(document.getElementById('ar'+i).value); };
+  for(var i=1;i<=4;i++){ document.getElementById('av'+i).textContent = v(i); }
+  var avg = avg4(v(1),v(2),v(3),v(4));
+  document.getElementById('a-avg').textContent = avg.toFixed(1);
+  var c = catFor(avg);
+  var tag = document.getElementById('a-cat');
+  tag.textContent = c.l; tag.style.background = c.bg; tag.style.color = c.tc;
+}
+
+function addACT(){
+  var u = document.getElementById('a-sel').value;
+  var v = function(i){ return parseInt(document.getElementById('ar'+i).value); };
+  var avg = avg4(v(1),v(2),v(3),v(4));
+  var c = catFor(avg);
+  rowsACT.push({id:'a'+Date.now(), u:u, c1:v(1),c2:v(2),c3:v(3),c4:v(4), avg:avg, cat:c.l});
+  renderACT(); saveStorage('act');
+}
+function delACT(id){ rowsACT = rowsACT.filter(function(x){return x.id!==id;}); renderACT(); saveStorage('act'); }
+
+function renderACT(){
+  document.getElementById('a-ct').textContent = rowsACT.length+' actividades';
+  if(rowsACT.length===0){
+    document.getElementById('a-tb').innerHTML = '<tr class="empty-row"><td colspan="4">Aún sin actividades evaluadas. Selecciona una arriba y agrégala.</td></tr>';
+    return;
+  }
+  var h = '<tr><th>Actividad</th><th style="text-align:center">Promedio</th><th>Categoría</th><th></th></tr>';
+  rowsACT.forEach(function(x){
+    var c = catFor(x.avg);
+    h += '<tr>';
+    h += '<td class="mn">'+x.u+'</td>';
+    h += '<td class="sc2" style="color:'+c.sc+'">'+x.avg.toFixed(1)+'</td>';
+    h += '<td><span style="display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;font-family:Raleway,sans-serif;background:'+cssvar(c.bg)+';color:'+cssvar(c.tc)+'">'+x.cat+'</span></td>';
+    h += '<td><button class="dl" title="Eliminar fila" onclick="delACT(\''+x.id+'\')">✕</button></td>';
+    h += '</tr>';
+  });
+  document.getElementById('a-tb').innerHTML = h;
+}
+
+/* ============================================================
+   EXPORT CSV
+   ============================================================ */
+function exportCSV(kind){
+  if(kind==='odc'){
+    if(rowsODC.length===0){ alert('No hay ODC para exportar aún.'); return; }
+    var csv = 'ODC,C1 Ciclo vida especies explotadas,C2 Ciclo vida especies raras-amenazadas,C3 Productividad biologica,C4 Diversidad biologica,C5 Estado de conservacion,C6 Servicios ecosistemicos,C7 Abundancia especies raras,C8 Importancia escenica-cultural,Promedio,Categoria\n';
+    rowsODC.forEach(function(x){
+      csv += '"'+x.u+'",'+x.c1+','+x.c2+','+x.c3+','+x.c4+','+x.c5+','+x.c6+','+x.c7+','+x.c8+','+x.avg.toFixed(1)+',"'+x.cat+'"\n';
+    });
+    downloadCSV(csv, 'Valoracion_Importancia_ODC_LSJ.csv');
+  } else {
+    if(rowsACT.length===0){ alert('No hay actividades para exportar aún.'); return; }
+    var csv2 = 'Actividad,C1 Usuarios beneficiados,C2 Personas dependientes,C3 Importancia economica,C4 Importancia sociocultural,Promedio,Categoria\n';
+    rowsACT.forEach(function(x){
+      csv2 += '"'+x.u+'",'+x.c1+','+x.c2+','+x.c3+','+x.c4+','+x.avg.toFixed(1)+',"'+x.cat+'"\n';
+    });
+    downloadCSV(csv2, 'Valoracion_Importancia_Actividades_LSJ.csv');
+  }
+}
+function downloadCSV(csv, filename){
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   LOCALSTORAGE
+   ============================================================ */
+var KEY_ODC = 'pem_lsj_valoracion_odc_v1';
+var KEY_ACT = 'pem_lsj_valoracion_act_v1';
+
+function saveStorage(kind){
+  try {
+    if(kind==='odc') localStorage.setItem(KEY_ODC, JSON.stringify(rowsODC));
+    else localStorage.setItem(KEY_ACT, JSON.stringify(rowsACT));
+    var ind = document.getElementById(kind==='odc' ? 'o-save' : 'a-save');
+    if(ind){
+      var now = new Date();
+      ind.textContent = 'Guardado ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+      clearTimeout(ind._t);
+      ind._t = setTimeout(function(){ ind.textContent=''; }, 4000);
+    }
+  } catch(e){}
+}
+
+function loadStorage(){
+  try {
+    var rawO = localStorage.getItem(KEY_ODC);
+    if(rawO){ var so = JSON.parse(rawO); if(Array.isArray(so)) rowsODC = so; }
+  } catch(e){}
+  try {
+    var rawA = localStorage.getItem(KEY_ACT);
+    if(rawA){ var sa = JSON.parse(rawA); if(Array.isArray(sa)) rowsACT = sa; }
+  } catch(e){}
+}
+
+function clearStorage(kind){
+  if(!confirm('¿Eliminar todas las filas guardadas de '+(kind==='odc'?'ODC':'actividades')+' y empezar desde cero?')) return;
+  try {
+    if(kind==='odc'){ localStorage.removeItem(KEY_ODC); rowsODC = []; renderODC(); }
+    else { localStorage.removeItem(KEY_ACT); rowsACT = []; renderACT(); }
+  } catch(e){}
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadStorage();
+renderODC(); renderACT();
+loO_note(); loA_note();
+</script>
+</body>
+</html>
